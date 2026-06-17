@@ -10,13 +10,13 @@ async function getOctokit() {
 }
 
 async function createProject(projectData) {
-    const { name, description, githubLink, userId } = projectData;
+    const { name, description, userId } = projectData;
     try {
+        
         const newProject = new Project({
             name,
             description,
-            githubLink,
-            user: userId
+            user:userId
         })
         return await newProject.save()
     } catch (err) {
@@ -34,6 +34,8 @@ async function analyzeProject(githubUrl) {
             owner,
             repo
         });
+
+    
 
         const requiredData = {
             name: repoData.full_name,
@@ -54,11 +56,38 @@ async function analyzeProject(githubUrl) {
         return topFolders;
 
     } catch (err) {
-        throw new Error("Error analyzing project: " + err.message);
+        if(err.response?.data.status == 404) {
+            throw ("The specified repository was not found or it was private. Please check the URL and try again.");
+        }
+        throw ("Error analyzing project: " + err.message);
     }
 }
 
+async function getProjectById(projectId, userId) {
+    try{
+        
+        
+        const project = await Project.findById(projectId).populate('user', 'name email');
+
+        
+        if (!project) {
+            throw ("Project not found");
+        }
+        
+
+        if (project.user.id.toString() != userId) {
+            throw ("You are not the owner of this project");
+        }
+
+        return project;
+    }catch(err){
+        throw ("Error fetching project by ID: " + err.message);
+    }
+}
+
+
 module.exports = {
     createProject,
-    analyzeProject
+    analyzeProject,
+    getProjectById
 }

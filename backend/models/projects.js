@@ -15,7 +15,7 @@ const projectSchema=new Schema({
     },
     indexedPaths:[
         {
-            type:String
+            type:Object,
         }
     ],
     status:{

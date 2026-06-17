@@ -4,10 +4,11 @@ const auth=require('../../middleware/auth')
 const projectControllers=require('../../controllers/project.controller')
 
 
+router.get('/:id',auth,projectControllers.getProjectById);
 
 
 router.post('/',auth,projectControllers.createProject);
 router.post('/analyzeRepo',auth,projectControllers.analyzeProject)
-
+router.post('/index',auth,projectControllers.indexProject)
 
 module.exports=router
