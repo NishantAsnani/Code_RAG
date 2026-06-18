@@ -8,6 +8,7 @@ const projectSchema=new Schema({
     },
     githubLink:{
         type:String,
+        default:""
     },
     description:{
         type:String,

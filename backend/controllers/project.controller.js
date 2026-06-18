@@ -79,8 +79,9 @@ async function analyzeProject(req, res) {
             // Save the indexed paths to the project
             await Project.findByIdAndUpdate(
                 req.body.projectId,
-                { indexedPaths: analysisResult.scopes },
-                {githubLink: githubUrl},
+                {indexedPaths: analysisResult.scopes,
+                githubLink: githubUrl
+                 },
                 { new: true }
             );
         }

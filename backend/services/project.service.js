@@ -89,5 +89,6 @@ async function getProjectById(projectId, userId) {
 module.exports = {
     createProject,
     analyzeProject,
-    getProjectById
+    getProjectById,
+    getOctokit
 }
