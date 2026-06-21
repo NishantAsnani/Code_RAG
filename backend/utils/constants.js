@@ -6,7 +6,7 @@ UNAUTHORIZED:401,
 CONFLICT:409,
 }
 
-const IGNORED_FOLDERS =[
+const IGNORED_FOLDERS = new Set([
   "node_modules",
   ".git",
   ".github",
@@ -17,9 +17,42 @@ const IGNORED_FOLDERS =[
   ".vscode",
   ".idea",
   "__pycache__"
-]
+]);
+
+const SUPPORTED_EXTENSIONS = new Set([
+    ".js",
+    ".ts",
+    ".tsx",
+    ".jsx",
+    ".py",
+    ".java",
+    ".go",
+    ".rs",
+    ".cpp",
+    ".c",
+    ".cs",
+    ".php",
+    ".rb",
+    ".md",
+    ".txt",
+    ".json",
+    ".yaml",
+    ".yml"
+]);
+
+const IGNORED_FILES = new Set([
+    "package-lock.json",
+    "yarn.lock",
+    "pnpm-lock.yaml",
+    "Cargo.lock",
+    "composer.lock",
+]);
+
+
 
 module.exports={
     STATUS_CODE,
-    IGNORED_FOLDERS
+    IGNORED_FOLDERS,
+    SUPPORTED_EXTENSIONS,
+    IGNORED_FILES,
 }

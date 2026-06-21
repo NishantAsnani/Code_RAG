@@ -6,6 +6,9 @@ const { RecursiveCharacterTextSplitter } = require("@langchain/textsplitters");
 const { pipeline } = require("@huggingface/transformers");
 const { ChromaClient } = require("chromadb");
 const Groq = require("groq-sdk");
+const Joi = require("joi");
+const { client } = require('../utils/helper');
+
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -83,7 +86,7 @@ async function testEndpoint(req, res) {
     // STEP 6: Store in Chroma
     await collection.add({
       ids: chunkedDocs.map((_, i) => `chunk-${i}`),
-     documents: chunkedDocs.map(doc => doc.pageContent),
+      documents: chunkedDocs.map(doc => doc.pageContent),
     });
 
     // STEP 7: Hardcoded Question
@@ -153,6 +156,103 @@ ${question}
   }
 }
 
+async function askQuestion(req, res) {
+  const projectSchema = Joi.object({
+    projectId: Joi.string().required(),
+    questionText: Joi.string().required()
+  });
+
+  const { error, value } = projectSchema.validate(req.body);
+  if (error) {
+    return sendErrorResponse(
+      res,
+      error?.message,
+      "Validation error",
+      STATUS_CODE.BAD_REQUEST,
+    );
+  }
+  try {
+    const { projectId, questionText } = value;
+
+
+    const collection= await client.getCollection({
+      name:projectId
+    })
+
+    const results = await collection.query({
+      queryTexts: [questionText],
+      nResults: 10,
+      where: {
+        projectId: projectId.toString()
+      }
+    })
+
+    const context = results.documents[0].join("\n\n");
+
+    const answer = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "system",
+          content:`You are an expert software engineer and repository analysis assistant.
+
+You are provided with code snippets, file contents, and documentation retrieved from a GitHub repository.
+
+Your job is to answer questions about the repository using ONLY the provided context.
+
+Guidelines:
+
+1. Carefully analyze the provided context before answering.
+
+2. When asked about project purpose, architecture, technologies, workflows, or implementation details, infer the answer from the available code and documentation when reasonable.
+
+3. Mention relevant file paths whenever useful.
+
+4. Do not invent functionality that is not supported by the context.
+
+5. If the answer is partially available, explain what can be determined and clearly mention any uncertainty.
+
+6. Only respond with "I don't know based on the provided repository context" when the retrieved context genuinely lacks sufficient information.
+
+7. Treat README files, configuration files, package files, routes, services, controllers, and source code as valid sources of information.
+
+8. The repository context below is the only source of truth.
+
+Repository Context:
+${context}`
+        },
+        {
+          role: "user",
+          content:
+          `
+          Context: ${context} 
+          Question:${questionText}`
+        }
+      ]
+    })
+
+
+    console.log(results.documents[0])
+
+    return sendSuccessResponse(
+      res,
+      answer,
+      "Answer for you query",
+      STATUS_CODE.SUCCESS
+    )
+  } catch (err) {
+    return sendErrorResponse(
+      res,
+      err.message,
+      "Error answering question",
+      STATUS_CODE.SERVER_ERROR,
+    );
+  }
+}
+
+
+
 module.exports = {
   testEndpoint,
+  askQuestion
 };
