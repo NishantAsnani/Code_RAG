@@ -5,6 +5,7 @@ const projectControllers=require('../../controllers/project.controller')
 
 
 router.get('/:id',auth,projectControllers.getProjectById);
+router.get('/',auth,projectControllers.getAllProjects);
 
 
 router.post('/',auth,projectControllers.createProject);

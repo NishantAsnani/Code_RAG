@@ -79,6 +79,31 @@ async function getProjectById(projectId, userId) {
   }
 }
 
+async function getAllProjects(queryParams){
+  try{
+    const { page, limit , userId  } = queryParams;
+    let whereClause={user:userId}
+    const offset = (page - 1) * limit; // Calculate offset for pagination
+    
+
+    const allProjects=await Project.find(whereClause).skip(offset).limit(limit)
+    const totalProjects = await Project.countDocuments(whereClause);
+    const totalPages = Math.ceil(totalProjects / limit);
+
+    return {
+      data: allProjects,
+      pagination: {
+        totalProjects,
+        totalPages,
+        currentPage: page,
+        limit
+      }
+    };
+  }catch(err){
+    throw new Error(err);
+  }
+}
+
 
 async function chunkAndCreateEmbeddings(projectId, files) {
   try {
@@ -144,4 +169,5 @@ module.exports = {
   analyzeProject,
   getProjectById,
   chunkAndCreateEmbeddings,
+  getAllProjects
 };

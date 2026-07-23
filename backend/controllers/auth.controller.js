@@ -78,11 +78,19 @@ async function Signup(req, res) {
     });
 
     if (createUser) {
+      const token=jwt.sign(
+        { id: createUser.id, email: createUser.email },
+        jwtSecret,
+        { expiresIn: "24h" }
+      );
+
+
+
       return sendSuccessResponse(
         res,
-        {data:createUser.data},
-        "User Created Successfully",
-        STATUS_CODE.CREATED
+        {token,email},
+        "Logged In Sucessfully",
+        STATUS_CODE.SUCCESS
       );
     }
   } catch (err) {
