@@ -243,7 +243,7 @@ ${context}`
       ]
     });
 
-    console.log(results.documents[0]);
+    
 
     return sendSuccessResponse(
       res,

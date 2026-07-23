@@ -86,3 +86,5 @@ ehthumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+chroma-data/
