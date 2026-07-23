@@ -1,10 +1,7 @@
 {
   "info": {
-    "_postman_id": "ac4365f6-3bd4-4acd-ad1f-2cc0bce36818",
     "name": "CodeWiki",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "18261591",
-    "_collection_link": "https://go.postman.co/collection/18261591-ac4365f6-3bd4-4acd-ad1f-2cc0bce36818?source=collection_link"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
@@ -108,7 +105,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"githubUrl\":\"https://github.com/NishantAsnani/Weather-app\",\r\n    \"projectId\":\"6a30c2f27b02e994e14573c7\"\r\n}",
+              "raw": "{\r\n    \"githubUrl\": \"{{githubUrl}}\",\r\n    \"projectId\": \"{{projectId}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -127,7 +124,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "6a32856775c03dfbbfbb98cf"
+                  "value": ""
                 }
               ]
             }
@@ -144,7 +141,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"projectId\":\"6a3bac74bddf49debe5bf911\"\r\n}"
+              "raw": "{\r\n    \"projectId\": \"{{projectId}}\"\r\n}"
             },
             "url": {
               "raw": "{{local}}/project",
@@ -174,7 +171,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWNhMmVkMjUxNDZiYjU3YTFmNWExOCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwiaWF0IjoxNzc3MTE4MTMzLCJleHAiOjE3NzcxMTgxNDN9.rwcBx3kQ-TF1jhn1TyrqKYky7b0cb731W1TYbh6w3WI",
+                  "value": "",
                   "type": "string"
                 }
               ]
@@ -191,7 +188,7 @@
               }
             },
             "url": {
-              "raw": "{{local}}/user?page=1&limit=10",
+              "raw": "{{local}}/user?page={{page}}&limit={{limit}}",
               "host": [
                 "{{local}}"
               ],
@@ -201,11 +198,11 @@
               "query": [
                 {
                   "key": "page",
-                  "value": "1"
+                  "value": "{{page}}"
                 },
                 {
                   "key": "limit",
-                  "value": "10"
+                  "value": "{{limit}}"
                 },
                 {
                   "key": "nameSearch",
@@ -226,7 +223,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZGYyM2E3NjZlZjY1MmZmMDMzMzZiMSIsImVtYWlsIjoiZGVtbzFAZ21haWwuY29tIiwiaWF0IjoxNzc2OTM0NjI1LCJleHAiOjE3NzcwMjEwMjV9.YU_X39oROKtGBrDpG8XNBwsQj3bhdqqgHSuO7ZjL-do",
+                  "value": "",
                   "type": "string"
                 }
               ]
@@ -264,7 +261,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjgxYWI5OGM2ZGUyZDE4YjhlODYwMiIsImVtYWlsIjoiZGVtb0BnbWFpbC5jb20iLCJpYXQiOjE3NTE2NTMwNjcsImV4cCI6MTc1MTczOTQ2N30.jhDxJYanl5sLoQG3xh8lj855m_uo4GsRG-40-Obu_4U",
+                  "value": "",
                   "type": "string"
                 }
               ]
@@ -281,18 +278,18 @@
               }
             },
             "url": {
-              "raw": "{{local}}/user/profile/invalid-id",
+              "raw": "{{local}}/user/profile/:id",
               "host": [
                 "{{local}}"
               ],
               "path": [
                 "user",
                 "profile",
-                "invalid-id"
+                ":id"
               ],
               "variable": [
                 {
-                  "value": "68e40772f035326bb82735b4",
+                  "value": "",
                   "key": "id"
                 }
               ]
@@ -329,7 +326,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "683de942a7ae6dddceaa11bc"
+                  "value": ""
                 }
               ]
             }
@@ -366,7 +363,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "69e351aa168cc4812a824744"
+                  "value": ""
                 }
               ]
             }
@@ -381,7 +378,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2RlOTQyYTdhZTZkZGRjZWFhMTFiYyIsImVtYWlsIjoiYXNuYW5pbmlzaGFudDJAZ21haWwuY29tIiwiaWF0IjoxNzQ4ODg4MDkwLCJleHAiOjE3NDg4OTE2OTB9.JrRMeSWwQuSDL3E0rKYCAhqIqOO0p-lERFYnaeVj_EE",
+                  "value": "",
                   "type": "string"
                 }
               ]
@@ -400,7 +397,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "683dec7a1f4fb881a64fcb23"
+                  "value": ""
                 }
               ]
             }
