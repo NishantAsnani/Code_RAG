@@ -8,7 +8,7 @@ const { ChromaClient } = require("chromadb");
 const Groq = require("groq-sdk");
 const Joi = require("joi");
 const { client } = require('../utils/helper');
-
+const { enhancedQuery } = require('../rag/queryHelper');
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -156,6 +156,19 @@ ${question}
   }
 }
 
+// Import the enhanced query helper
+
+
+// Same generateFn you already have (or import from a shared file)
+async function generateFn(prompt) {
+  const res = await groq.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.3,
+  });
+  return res.choices[0].message.content;
+}
+
 async function askQuestion(req, res) {
   const projectSchema = Joi.object({
     projectId: Joi.string().required(),
@@ -171,21 +184,23 @@ async function askQuestion(req, res) {
       STATUS_CODE.BAD_REQUEST,
     );
   }
+
   try {
     const { projectId, questionText } = value;
 
+    const collection = await client.getCollection({
+      name: projectId
+    });
 
-    const collection= await client.getCollection({
-      name:projectId
-    })
 
-    const results = await collection.query({
-      queryTexts: [questionText],
-      nResults: 10,
-      where: {
-        projectId: projectId.toString()
-      }
-    })
+
+    // ✅ NEW: enhanced query with HyDE + classification + smart routing
+    const { results } = await enhancedQuery(
+      questionText,
+      collection,
+      generateFn,
+      { nResults: 10 }
+    );
 
     const context = results.documents[0].join("\n\n");
 
@@ -194,7 +209,7 @@ async function askQuestion(req, res) {
       messages: [
         {
           role: "system",
-          content:`You are an expert software engineer and repository analysis assistant.
+          content: `You are an expert software engineer and repository analysis assistant.
 
 You are provided with code snippets, file contents, and documentation retrieved from a GitHub repository.
 
@@ -223,23 +238,19 @@ ${context}`
         },
         {
           role: "user",
-          content:
-          `
-          Context: ${context} 
-          Question:${questionText}`
+          content: questionText   // ← just the question, context is already in system prompt
         }
       ]
-    })
+    });
 
-
-    console.log(results.documents[0])
+    console.log(results.documents[0]);
 
     return sendSuccessResponse(
       res,
       answer,
-      "Answer for you query",
+      "Answer for your query",
       STATUS_CODE.SUCCESS
-    )
+    );
   } catch (err) {
     return sendErrorResponse(
       res,

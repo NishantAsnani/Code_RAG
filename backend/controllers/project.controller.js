@@ -105,7 +105,9 @@ async function analyzeProject(req, res) {
 
 async function indexProject(req, res) {
     const projectSchema = Joi.object({
-        projectId: Joi.string().required()
+        projectId: Joi.string().required(),
+        indexedPath: Joi.string().required()
+
     });
     const { error, value } = projectSchema.validate(req.body);
     if (error) {
@@ -117,13 +119,13 @@ async function indexProject(req, res) {
         );
     }
 try{
-    const {projectId } = value;
+    const {projectId,indexedPath } = value;
     const userId=req.user.id;
 
     
     const fetchedProject= await projectServices.getProjectById(projectId,userId);
 
-    const queueWork= await submissionQueue.add('indexProject', { project: fetchedProject});
+    const queueWork= await submissionQueue.add('indexProject', { project: fetchedProject,indexedPath});
 
     return sendSuccessResponse(
         res,

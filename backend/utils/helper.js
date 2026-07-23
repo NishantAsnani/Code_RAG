@@ -7,6 +7,8 @@ const {
 const pathModule = require("path");
 const { Octokit } = require("@octokit/rest");
 const { ChromaClient } = require("chromadb");
+const Groq = require('groq-sdk');
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 function buildFolderStructure(tree) {
   const folders = new Map();
@@ -23,7 +25,7 @@ function buildFolderStructure(tree) {
 
     const topLevelFolder = parts[0];
 
-    if (IGNORED_FOLDERS.includes(topLevelFolder)) return;
+    if (IGNORED_FOLDERS.has(topLevelFolder)) return;
 
     folders.set(topLevelFolder, (folders.get(topLevelFolder) || 0) + 1);
   });
@@ -160,6 +162,19 @@ async function getOctokit() {
   });
 }
 
+
+
+async function generateFn(prompt) {
+  const res = await groq.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.3,
+  });
+  return res.choices[0].message.content;
+}
+
+
+
 const client = new ChromaClient({
   path: "http://localhost:8000",
 });
@@ -169,5 +184,7 @@ module.exports = {
   fetchFilesFromGithub,
   getGithubRepoInfo,
   getOctokit,
-  client
+  client,
+  generateFn,
+  groq
 };

@@ -9,16 +9,13 @@ const worker = new Worker(
   "worker-queue",
   async (job) => {
     try {
-      const { project } = job.data;
+      const { project,indexedPath } = job.data;
       console.log(
         `Processing job with ID ${job.id} for project:`,
         project.name,
       );
 
-      const path =
-        project.indexedPaths[0].value === "/"
-          ? ""
-          : project.indexedPaths[0].value;
+      const path =indexedPath==""?"/":indexedPath
           
       const requiredFiles = await fetchFilesFromGithub(
         path,
@@ -32,7 +29,11 @@ const worker = new Worker(
       console.log(err);
     }
   },
-  { connection },
+  { connection,
+    lockDuration: 300000,      // 5 minutes (default is 30s)
+    lockRenewTime: 150000,
+
+   },
 );
 
 worker.on("completed", (job) => {
